@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
@@ -67,6 +68,12 @@ class PostController extends Controller
    */
   public function destroy(Post $post)
   {
-    //
+    // TODO:
+    $id = Auth::id();
+    if ($id !== $post->user_id) {
+      return response('Unauthorized', 403);
+    }
+    $post->delete();
+    return back();
   }
 }

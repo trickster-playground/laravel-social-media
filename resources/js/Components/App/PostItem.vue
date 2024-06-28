@@ -3,6 +3,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { PencilIcon, TrashIcon, Cog8ToothIcon } from "@heroicons/vue/24/solid";
 import UpdatePostHeader from "./UpdatePostHeader.vue";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({
   post: Object,
@@ -11,12 +12,21 @@ const props = defineProps({
 const emit = defineEmits(["editClick"]);
 
 function openEditModal() {
-  emit('editClick', props.post);
+  emit("editClick", props.post);
 }
 
 function isImage(attachment) {
   const mime = attachment.mime.split("/");
   return mime[0].toLowerCase() === "image";
+}
+
+function deletePost() {
+  if (window.confirm("Are you sure you want to delete this post?")) {
+    router.delete(route("posts.destroy", props.post.id), {
+      preserveScroll: true,
+    });
+    console.log("deletePost");
+  }
 }
 </script>
 
@@ -66,6 +76,7 @@ function isImage(attachment) {
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
                   <button
+                    @click="deletePost"
                     :class="[
                       active ? 'bg-red-600 text-white' : 'text-white',
                       'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -192,8 +203,6 @@ function isImage(attachment) {
       </button>
     </div>
   </div>
-
-
 </template>
 
 <style></style>
