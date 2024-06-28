@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#app {
+  height: 100%;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #bcbfc7 #2962977c;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 6px; /* Lebar scrollbar vertikal */
+  height: 6px; /* Tinggi scrollbar horizontal */
+}
+
+::-webkit-scrollbar-track {
+  background: #eee;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+  border: 2px solid #eee;
+}
+
+html {
+  /* Selalu tampilkan scrollbar */
+  overflow-y: scroll;
+  /* Gunakan scroll-gutter untuk menghindari perubahan layout */
+  scrollbar-gutter: stable;
+}
