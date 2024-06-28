@@ -101,11 +101,14 @@ function deletePost() {
         <div
           v-if="!open"
           v-html="post.body.substring(0, 200)"
-          class="px-4 pb-2 pt-4 text-md text-justify first-letter:uppercase"
+          class="ck-content-output px-4 pb-2 pt-4 text-md text-justify first-letter:uppercase"
         ></div>
         <template v-if="post.body.length > 200">
           <DisclosurePanel class="px-4 pb-2 pt-4 text-md">
-            <div class="text-justify" v-html="post.body"></div>
+            <div
+              class="ck-content-output text-justify"
+              v-html="post.body"
+            ></div>
           </DisclosurePanel>
           <div class="flex justify-end mt-4">
             <DisclosureButton class="btn btn-primary rounded-xl hover:btn-info">
@@ -168,7 +171,7 @@ function deletePost() {
     </div>
     <div class="flex gap-4 my-2">
       <button
-        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-gray-700 rounded-lg"
+        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-red-700 rounded-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +187,7 @@ function deletePost() {
         Like
       </button>
       <button
-        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-gray-700 rounded-lg"
+        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-blue-700 rounded-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

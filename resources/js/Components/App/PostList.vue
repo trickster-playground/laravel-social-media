@@ -76,7 +76,7 @@ const post2 = {
 
 <template>
   <div
-    class="px-3 bg-gray-700 py-3 rounded-2xl h-full overflow-auto max-h-[calc(100vh-7rem)]"
+    class="px-3 bg-gray-700 py-3 rounded-2xl h-fit overflow-auto max-h-[calc(100vh-7rem)]"
   >
     <PostItem
       v-for="post of posts"

@@ -40,11 +40,15 @@
                 </div>
                 <div class="my-4">
                   <UpdatePostHeader :post="post" />
-                  <TextAreaInput
+                  <ckeditor
+                    :editor="editor"
                     v-model="form.body"
-                    rows="5"
+                    :config="editorConfig"
+                  ></ckeditor>
+                  <!-- <TextAreaInput
+                    v-model="form.body"
                     placeholder="Update your post"
-                  />
+                  /> -->
                 </div>
 
                 <div class="mt-4 flex justify-center gap-2">
@@ -87,6 +91,31 @@ import TextAreaInput from "@/Components/TextAreaInput.vue";
 import UpdatePostHeader from "@/Components/App/UpdatePostHeader.vue";
 import { CheckIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 import { useForm } from "@inertiajs/vue3";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+
+const editor = ClassicEditor;
+
+const editorConfig = {
+  toolbar: [
+    "heading",
+    "|",
+    "bold",
+    "italic",
+    "|",
+    "link",
+    "|",
+    "bulletedList",
+    "numberedList",
+    "|",
+    "outdent",
+    "indent",
+    "|",
+    "blockQuote",
+    "|",
+    "undo",
+    "redo",
+  ],
+};
 
 const props = defineProps({
   post: {

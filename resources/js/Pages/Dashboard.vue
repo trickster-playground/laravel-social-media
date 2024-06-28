@@ -15,7 +15,7 @@ defineProps({
   <Head title="Homepage" />
 
   <AuthenticatedLayout>
-    <div class="py-2 n">
+    <div class="py-2 h-full">
       <div class="grid lg:grid-cols-12 gap-3">
         <div class="lg:col-span-3 px-3 lg:order-1 h-full">
           <GroupList />

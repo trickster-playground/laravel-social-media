@@ -10,12 +10,14 @@ const searchKeyword = ref("");
 <template>
   <TextInput
     :model-value="searchKeyword"
-    placeholder="Search Groups"
+    placeholder="Search Friends"
     class="w-full my-2"
   />
   <div class="py-8">
-    <div v-if="false" class="text-gray-200 flex justify-center align-middle">
-      You don't have any friends yet.
+    <div v-if="false" class="flex justify-center">
+      <h1 class="text-7xl font-black align-middle">
+        You don't have any friends, sad :(
+      </h1>
     </div>
     <div
       v-else
@@ -23,16 +25,13 @@ const searchKeyword = ref("");
     >
       <FollowingItem
         image="https://picsum.photos/100"
-        title="Laravel Developers"
+        title="Mark Zuckerberg"
       />
       <FollowingItem
         image="https://picsum.photos/100"
-        title="Laravel Developers"
+        title="Elon Reeve Musk"
       />
-      <FollowingItem
-        image="https://picsum.photos/100"
-        title="Laravel Developers"
-      />
+      <FollowingItem image="https://picsum.photos/100" title="Bill Gates" />
     </div>
   </div>
 </template>

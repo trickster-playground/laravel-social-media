@@ -22,8 +22,8 @@ const searchKeyword = ref("");
     >
       <GroupItem
         image="https://picsum.photos/100"
-        title="Laravel Developers"
-        description="Lorem ipsum dolor sit amet consectetur adipisicing elit."
+        title="Chudai 18+"
+        description="Keep calm and stay chudai!"
       />
     </div>
   </div>
