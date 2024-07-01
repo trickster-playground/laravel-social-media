@@ -35,7 +35,7 @@
                     as="h3"
                     class="text-lg font-medium leading-6 py-4 rounded-lg w-96 text-white bg-blue-600/40 justify-center flex"
                   >
-                    Update Post
+                    {{ post.id ? "Update Post" : "Create Post" }}
                   </DialogTitle>
                 </div>
                 <div class="my-4">
@@ -45,10 +45,6 @@
                     v-model="form.body"
                     :config="editorConfig"
                   ></ckeditor>
-                  <!-- <TextAreaInput
-                    v-model="form.body"
-                    placeholder="Update your post"
-                  /> -->
                 </div>
 
                 <div class="mt-4 flex justify-center gap-2">
@@ -150,14 +146,28 @@ watch(
 );
 
 function SubmitEvent() {
-  form.put(route("posts.update", props.post.id), {
-    preserveScroll: true,
-    onSuccess: () => {
-      closeModal();
-    },
-    onError: () => {
-      alert("Failed to update post");
-    },
-  });
+  if (form.id) {
+    form.put(route("posts.update", props.post.id), {
+      preserveScroll: true,
+      onSuccess: () => {
+        closeModal();
+        form.reset();
+      },
+      onError: () => {
+        alert("Failed to update post");
+      },
+    });
+  } else {
+    form.post(route("posts.store"), {
+      preserveScroll: true,
+      onSuccess: () => {
+        closeModal();
+        form.reset();
+      },
+      onError: () => {
+        alert("Failed to create post");
+      },
+    });
+  }
 }
 </script>

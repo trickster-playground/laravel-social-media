@@ -1,33 +1,27 @@
 <script setup>
 import { ref } from "vue";
-import TextAreaInput from "@/Components/TextAreaInput.vue";
-import { useForm } from "@inertiajs/vue3";
+import PostModal from "@/Components/App/PostModal.vue";
+import { usePage } from "@inertiajs/vue3";
+
+const authUser = usePage().props.auth.user;
 
 // Define reactive variables
-const postCreating = ref(false);
+const showModal = ref(false);
 const fileInput = ref(null);
+const newPost = ref({
+  id: null,
+  body: "",
+  user: authUser,
+});
 
 // Define method to handle file input click
 const handleClick = () => {
   fileInput.value.click();
 };
 
-const newPostForm = useForm({
-  body: "",
-});
-
-function submit(e) {
-  e.preventDefault();
-  newPostForm.post(route("posts.store"), {
-    onError: () => {
-      console.log("error");
-    },
-    onSuccess: () => {
-      console.log("success");
-      newPostForm.reset();
-    },
-  });
-}
+const showCreatePostModal = () => {
+  showModal.value = true;
+};
 </script>
 
 <template>
@@ -38,12 +32,21 @@ function submit(e) {
       Timeline
     </h2>
     <div class="py-8">
-      <TextAreaInput
-        @click="postCreating = true"
-        placeholder="Click Here to Create New Post"
-        v-model="newPostForm.body"
-      />
-      <div v-if="postCreating">
+      <div @click="showCreatePostModal" class="textarea textarea-info w-full py-2 px-2 text-white border-2 bg-gray-700 border-blue-400 rounded-lg">
+        <p class="text-center text-gray-400">Click here to create new post</p>
+      </div>
+      <PostModal :post="newPost" v-model="showModal" />
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+</style>
+
+<!-- <div>
         <div class="flex gap-2 justify-between mt-2">
           <button
             type="button"
@@ -53,7 +56,7 @@ function submit(e) {
             Attach File
           </button>
 
-          <!-- Hidden File Input -->
+          Hidden File Input
           <input
             type="file"
             id="dropzone-file"
@@ -69,13 +72,4 @@ function submit(e) {
             Post
           </button>
         </div>
-      </div>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-.cursor-pointer {
-  cursor: pointer;
-}
-</style>
+      </div> -->
