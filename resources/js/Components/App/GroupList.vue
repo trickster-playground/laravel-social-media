@@ -10,7 +10,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
         <DisclosureButton class="w-full">
           <div class="flex justify-center items-center gap-2">
             <h2
-              class="font-semibold text-xl text-gray-800 dark:text-blue-400 leading-tight"
+              class="text-2xl font-black justify-center text-center text-blue-500"
             >
               My Groups
             </h2>

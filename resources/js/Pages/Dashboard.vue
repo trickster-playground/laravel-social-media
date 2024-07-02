@@ -8,6 +8,7 @@ import { Head } from "@inertiajs/vue3";
 
 defineProps({
   posts: Object,
+  user: Object,
 });
 </script>
 
@@ -15,16 +16,22 @@ defineProps({
   <Head title="Homepage" />
 
   <AuthenticatedLayout>
-    <div class="py-2 h-full">
-      <div class="grid lg:grid-cols-12 gap-3">
-        <div class="lg:col-span-3 px-3 lg:order-1 h-full">
+    <div class="grid lg:grid-cols-12 gap-3 mt-4">
+      <div class="lg:col-span-3 lg:order-1 h-full">
+        <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <GroupList />
         </div>
-        <div class="lg:col-span-3 px-3 lg:order-3 h-full">
+      </div>
+      <div class="lg:col-span-3 lg:order-3 h-full">
+        <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <FollowingList />
         </div>
-        <div class="lg:col-span-6 px-2 my-2 lg:order-2 h-full">
+      </div>
+      <div class="lg:col-span-6 lg:order-2 h-full">
+        <div class="bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
           <CreatePost />
+        </div>
+        <div class="bg-gray-800 mt-2 overflow-hidden shadow-sm sm:rounded-lg">
           <PostList :posts="posts.data" />
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rules\File;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StorePostRequest extends FormRequest
@@ -22,7 +23,14 @@ class StorePostRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'body' => 'required|string',
+      'body' => 'nullable|string',
+      'attachments' => 'nullable|array|max:10',
+      'attachments.*' => [
+        'file',
+        File::types([
+          'jpg', 'png', 'jpeg', 'gif', 'svg', 'pdf', 'doc', 'docx', 'mp3', 'mp4', 'csv', 'xlsx', 'xls', 'ppt', 'pptx', 'zip'
+        ])->max(500 * 1024 * 1024),
+      ],
       'user_id' => 'required|exists:users,id',
     ];
   }

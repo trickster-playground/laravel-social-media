@@ -3,7 +3,7 @@
     <a href="javascript:void(0)">
       <img
         :src="post.user.avatar_url"
-        class="w-[60px] rounded-full border-2 transition-all hover:border-blue-500"
+        class="w-[60px] rounded-full border-2 hover:border-blue-500"
       />
     </a>
     <div>
