@@ -154,4 +154,12 @@ class PostController extends Controller
     $post->delete();
     return back();
   }
+
+  public function downloadAttachment(PostAttachment $attachment)
+  {
+
+    $customName = $attachment->name;
+
+    return response()->download(Storage::disk('public')->path($attachment->path), $customName);
+  }
 }
