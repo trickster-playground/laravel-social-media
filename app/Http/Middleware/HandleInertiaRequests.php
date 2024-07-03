@@ -6,6 +6,7 @@ use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use App\Http\Requests\StorePostRequest;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -40,9 +41,10 @@ class HandleInertiaRequests extends Middleware
         ...(new Ziggy)->toArray(),
         'location' => $request->url(),
       ],
+      'attachmentExtensions' => StorePostRequest::$extensions,
       ...parent::share($request), [
         'flash' => [
-          'message' => fn () => $request->session()->get('message')
+          'messages' => fn () => $request->session()->get('messages')
         ],
       ],
     ];

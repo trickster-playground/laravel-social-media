@@ -20,6 +20,7 @@ import { useForm } from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { isImage } from "@/helpers";
 import { ref } from "vue";
+import { usePage } from "@inertiajs/vue3";
 
 const editor = ClassicEditor;
 
@@ -45,6 +46,8 @@ const editorConfig = {
   ],
 };
 
+const attachmentExtensions = usePage().props.attachmentExtensions;
+
 const props = defineProps({
   post: {
     type: Object,
@@ -54,6 +57,8 @@ const props = defineProps({
 });
 
 const attachmentFiles = ref([]);
+const attachmentErrors = ref([]);
+const showExtensionsText = ref(false);
 
 const show = computed({
   get: () => props.modelValue,
@@ -70,8 +75,12 @@ function closeModal() {
 
 function resetModal() {
   form.reset();
+  showExtensionsText.value = false;
+  attachmentErrors.value = [];
   attachmentFiles.value = [];
-  props.post.attachments.forEach((file) => (file.deleted = false));
+  if (props.post.attachments) {
+    props.post.attachments.forEach((file) => (file.deleted = false));
+  }
 }
 
 const form = useForm({
@@ -97,8 +106,8 @@ function SubmitEvent() {
       onSuccess: () => {
         closeModal();
       },
-      onError: () => {
-        alert("Failed to update post");
+      onError: (errors) => {
+        processErrors(errors);
       },
     });
   } else {
@@ -107,15 +116,30 @@ function SubmitEvent() {
       onSuccess: () => {
         closeModal();
       },
-      onError: () => {
-        alert("Failed to create post");
+      onError: (errors) => {
+        processErrors(errors);
       },
     });
   }
 }
 
+function processErrors(errors) {
+  for (const key in errors) {
+    if (key.includes(".")) {
+      const [, index] = key.split(".");
+      attachmentErrors.value[index] = errors[key];
+    }
+  }
+}
+
 async function onAttachmentChoose(event) {
+  showExtensionsText.value = false;
   for (const file of event.target.files) {
+    let parts = file.name.split(".");
+    let ext = parts.pop().toLowerCase();
+    if (!attachmentExtensions.includes(ext)) {
+      showExtensionsText.value = true;
+    }
     const fileInfo = {
       file,
       url: await readFile(file),
@@ -210,20 +234,31 @@ function undoDeleted(fileInfo) {
                     v-model="form.body"
                     :config="editorConfig"
                   ></ckeditor>
+                  <div
+                    v-if="showExtensionsText"
+                    class="border-l-4 border-blue-500 bg-blue-400/10 text-white text-xs py-2 px-2 mt-3"
+                  >
+                    Trickster just allow following files type, please check
+                    before submit: <br />
+                    {{ attachmentExtensions.join(", ") }}
+                  </div>
 
                   <div
-                    class="grid gap-3 w-full h-full"
+                    class="grid gap-3"
                     :class="
                       computedAttachments.length === 1
                         ? 'grid-cols-1'
-                        : computedAttachments.length === 2
-                        ? 'grid-cols-2'
-                        : 'grid-cols-3'
+                        : 'grid-cols-2'
                     "
                   >
-                    <template v-for="fileInfo of computedAttachments">
+                    <div v-for="(fileInfo, index) of computedAttachments">
                       <div
                         class="group aspect-square bg-gray-900 flex flex-col items-center justify-center relative my-4 w-full h-full"
+                        :class="
+                          attachmentErrors[index]
+                            ? 'border-red-500 bg-red-900/20 border-2'
+                            : ''
+                        "
                       >
                         <div
                           v-if="fileInfo.deleted"
@@ -261,8 +296,11 @@ function undoDeleted(fileInfo) {
                             {{ (fileInfo.file || fileInfo).name }}
                           </p>
                         </div>
+                        <small class="text-red-500 font-black mt-6">
+                          {{ attachmentErrors[index] }}
+                        </small>
                       </div>
-                    </template>
+                    </div>
                   </div>
                 </div>
 

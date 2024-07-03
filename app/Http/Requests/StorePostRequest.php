@@ -7,6 +7,12 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StorePostRequest extends FormRequest
 {
+  public static array $extensions =
+  [
+    'jpg', 'png', 'jpeg', 'gif', 'svg', 'pdf', 'doc', 'docx', 'mp3', 'mp4', 'csv', 'xlsx', 'xls', 'ppt', 'pptx', 'zip'
+  ];
+
+
   /**
    * Determine if the user is authorized to make this request.
    */
@@ -27,9 +33,7 @@ class StorePostRequest extends FormRequest
       'attachments' => 'nullable|array|max:10',
       'attachments.*' => [
         'file',
-        File::types([
-          'jpg', 'png', 'jpeg', 'gif', 'svg', 'pdf', 'doc', 'docx', 'mp3', 'mp4', 'csv', 'xlsx', 'xls', 'ppt', 'pptx', 'zip'
-        ])->max(500 * 1024 * 1024),
+        File::types(self::$extensions)->max(500 * 1024 * 1024),
       ],
       'user_id' => 'required|exists:users,id',
     ];
@@ -41,5 +45,12 @@ class StorePostRequest extends FormRequest
       'user_id' => auth()->user()->id,
       'body' => $this->input('body') ?: '',
     ]);
+  }
+
+  public function messages()
+  {
+    return [
+      'attachments.*' => 'Trickster say no to this file.',
+    ];
   }
 }
