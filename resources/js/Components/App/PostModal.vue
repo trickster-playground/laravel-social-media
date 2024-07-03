@@ -223,7 +223,7 @@ function undoDeleted(fileInfo) {
                   >
                     <template v-for="fileInfo of computedAttachments">
                       <div
-                        class="group aspect-square bg-gray-500 flex flex-col items-center justify-center relative my-4 w-full h-full"
+                        class="group aspect-square bg-gray-900 flex flex-col items-center justify-center relative my-4 w-full h-full"
                       >
                         <div
                           v-if="fileInfo.deleted"
@@ -246,7 +246,7 @@ function undoDeleted(fileInfo) {
                         <img
                           v-if="isImage(fileInfo.file || fileInfo)"
                           :src="fileInfo.url"
-                          class="object-cover w-full h-full"
+                          class="object-contain w-full h-full"
                           :class="fileInfo.deleted ? 'opacity-80' : ''"
                         />
 
