@@ -2,15 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PostAttachment extends Model
 {
-    use HasFactory;
-    CONST UPDATED_AT = 'created_at';
+  use HasFactory;
+  const UPDATED_AT = 'created_at';
 
-    protected $fillable = [
-        'post_id', 'name', 'path', 'mime', 'size', 'created_by'
-    ];
+  protected $fillable = [
+    'post_id', 'name', 'path', 'mime', 'size', 'created_by'
+  ];
+
+  protected static function boot()
+  {
+    parent::boot();
+
+    static::deleted(function (self $model) {
+      Storage::disk('public')->delete($model->path);
+    });
+  }
 }

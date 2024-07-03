@@ -46,7 +46,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
     </div>
     <div class="hidden lg:block">
       <h2
-        class="font-semibold text-xl text-gray-800 dark:text-blue-400 leading-tight text-center mb-4"
+        class="text-2xl font-black justify-center text-center text-blue-500"
       >
         My Groups
       </h2>

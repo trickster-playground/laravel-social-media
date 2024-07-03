@@ -22,7 +22,7 @@ const showCreatePostModal = () => {
 <template>
  <div class="px-3 bg-gray-800 py-2 rounded-2xl mb-2">
   <h2
-   class="font-semibold text-center text-xl text-gray-800 dark:text-blue-400 leading-tight px-5"
+   class="text-2xl font-black justify-center text-center text-blue-500"
   >
    Timeline
   </h2>
@@ -43,31 +43,3 @@ const showCreatePostModal = () => {
  cursor: pointer;
 }
 </style>
-
-<!-- <div>
-        <div class="flex gap-2 justify-between mt-2">
-          <button
-            type="button"
-            class="btn btn-secondary rounded-xl hover:bg-gray-200"
-            @click="handleClick"
-          >
-            Attach File
-          </button>
-
-          Hidden File Input
-          <input
-            type="file"
-            id="dropzone-file"
-            class="hidden"
-            ref="fileInput"
-          />
-
-          <button
-            @click="submit"
-            type="submit"
-            class="btn btn-primary rounded-xl hover:btn-info w-24"
-          >
-            Post
-          </button>
-        </div>
-      </div> -->

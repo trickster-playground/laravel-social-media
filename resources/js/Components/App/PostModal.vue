@@ -14,6 +14,7 @@ import {
   PaperClipIcon,
   XCircleIcon,
   DocumentMagnifyingGlassIcon,
+  ArrowPathIcon,
 } from "@heroicons/vue/24/solid";
 import { useForm } from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -59,36 +60,39 @@ const show = computed({
   set: (value) => emit("update:modelValue", value),
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "hide"]);
 
 function closeModal() {
   show.value = false;
+  emit("hide");
   resetModal();
 }
 
 function resetModal() {
   form.reset();
   attachmentFiles.value = [];
+  props.post.attachments.forEach((file) => (file.deleted = false));
 }
 
 const form = useForm({
-  id: "",
   body: "",
   attachments: [],
+  deletedIds: [],
+  _method: "POST",
 });
 
 watch(
   () => props.post,
   () => {
-    form.id = props.post.id;
-    form.body = props.post.body;
+    form.body = props.post.body || "";
   }
 );
 
 function SubmitEvent() {
   form.attachments = attachmentFiles.value.map((fileInfo) => fileInfo.file);
-  if (form.id) {
-    form.put(route("posts.update", props.post.id), {
+  if (props.post.id) {
+    form._method = "PUT";
+    form.post(route("posts.update", props.post.id), {
       preserveScroll: true,
       onSuccess: () => {
         closeModal();
@@ -138,10 +142,24 @@ async function readFile(file) {
   });
 }
 
+const computedAttachments = computed(() => {
+  return [...attachmentFiles.value, ...(props.post.attachments || [])];
+});
+
 function removeAttachment(fileInfo) {
-  attachmentFiles.value = attachmentFiles.value.filter(
-    (file) => file !== fileInfo
-  );
+  if (fileInfo.file) {
+    attachmentFiles.value = attachmentFiles.value.filter(
+      (file) => file !== fileInfo
+    );
+  } else {
+    form.deletedIds.push(fileInfo.id);
+    fileInfo.deleted = true;
+  }
+}
+
+function undoDeleted(fileInfo) {
+  form.deletedIds = form.deletedIds.filter((id) => id !== fileInfo.id);
+  fileInfo.deleted = false;
 }
 </script>
 
@@ -196,17 +214,29 @@ function removeAttachment(fileInfo) {
                   <div
                     class="grid gap-3 w-full h-full"
                     :class="
-                      attachmentFiles.length === 1
+                      computedAttachments.length === 1
                         ? 'grid-cols-1'
-                        : attachmentFiles.length === 2
+                        : computedAttachments.length === 2
                         ? 'grid-cols-2'
                         : 'grid-cols-3'
                     "
                   >
-                    <template v-for="fileInfo of attachmentFiles">
+                    <template v-for="fileInfo of computedAttachments">
                       <div
                         class="group aspect-square bg-gray-500 flex flex-col items-center justify-center relative my-4 w-full h-full"
                       >
+                        <div
+                          v-if="fileInfo.deleted"
+                          class="absolute left-0 bottom-0 right-0 py-2 px-3 bg-red-700 text-white text-sm z-30 flex items-center justify-between"
+                        >
+                          To be deleted
+
+                          <ArrowPathIcon
+                            @click="undoDeleted(fileInfo)"
+                            class="w-5 h-5 ml-1 z-30 cursor-pointer"
+                          />
+                        </div>
+
                         <button
                           class="absolute right-1 top-1 rounded-full bg-gray-400 hover:bg-red-600 text-white text-xs flex items-center cursor-pointer w-10 h-10 justify-center"
                           @click="removeAttachment(fileInfo)"
@@ -214,18 +244,23 @@ function removeAttachment(fileInfo) {
                           <XCircleIcon class="size-6" />
                         </button>
                         <img
-                          v-if="isImage(fileInfo.file)"
+                          v-if="isImage(fileInfo.file || fileInfo)"
                           :src="fileInfo.url"
                           class="object-cover w-full h-full"
+                          :class="fileInfo.deleted ? 'opacity-80' : ''"
                         />
 
-                        <template v-else>
+                        <div
+                          v-else
+                          class="flex justify-center items-center flex-col"
+                          :class="fileInfo.deleted ? 'opacity-80' : ''"
+                        >
                           <DocumentMagnifyingGlassIcon class="w-16 h-16" />
 
                           <p class="text-white text-center">
-                            {{ fileInfo.file.name }}
+                            {{ (fileInfo.file || fileInfo).name }}
                           </p>
-                        </template>
+                        </div>
                       </div>
                     </template>
                   </div>

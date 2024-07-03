@@ -92,8 +92,52 @@ class PostController extends Controller
    */
   public function update(UpdatePostRequest $request, Post $post)
   {
-    $data = $request->validated();
-    $post->update($data);
+
+    $user = $request->user();
+
+    DB::beginTransaction();
+    $allFilePaths = [];
+    try {
+      $data = $request->validated();
+      $post->update($data);
+
+      $deletedIds = $data['deletedIds'] ?? [];
+
+      $attachments = PostAttachment::query()
+        ->where('post_id', $post->id)
+        ->whereIn('id', $deletedIds)
+        ->get();
+
+      foreach ($attachments as $attachment) {
+        $attachment->delete();
+      }
+
+      //Store File
+
+      $files = $data['attachments'] ?? [];
+      foreach ($files as $file) {
+        $path = $file->store('attachments/' . $post->id, 'public');
+        $allFilePaths[] = $path;
+        PostAttachment::create([
+          'post_id' => $post->id,
+          'name' => $file->getClientOriginalName(),
+          'path' => $path,
+          'mime' => $file->getMimeType(),
+          'size' => $file->getSize(),
+          'created_by' => $user->id,
+        ]);
+      }
+
+      DB::commit();
+    } catch (\Exception $e) {
+      foreach ($allFilePaths as $path) {
+        Storage::disk('public')->delete($path);
+      }
+      DB::rollBack();
+      return response('Failed to create post', 500);
+    }
+
+
     return back();
   }
 
