@@ -58,7 +58,7 @@ const props = defineProps({
 
 const attachmentFiles = ref([]);
 const attachmentErrors = ref([]);
-const showExtensionsText = ref(false);
+const formErrors = ref({});
 
 const show = computed({
   get: () => props.modelValue,
@@ -75,7 +75,7 @@ function closeModal() {
 
 function resetModal() {
   form.reset();
-  showExtensionsText.value = false;
+  formErrors.value = {};
   attachmentErrors.value = [];
   attachmentFiles.value = [];
   if (props.post.attachments) {
@@ -124,6 +124,7 @@ function SubmitEvent() {
 }
 
 function processErrors(errors) {
+  formErrors.value = errors;
   for (const key in errors) {
     if (key.includes(".")) {
       const [, index] = key.split(".");
@@ -133,13 +134,7 @@ function processErrors(errors) {
 }
 
 async function onAttachmentChoose(event) {
-  showExtensionsText.value = false;
   for (const file of event.target.files) {
-    let parts = file.name.split(".");
-    let ext = parts.pop().toLowerCase();
-    if (!attachmentExtensions.includes(ext)) {
-      showExtensionsText.value = true;
-    }
     const fileInfo = {
       file,
       url: await readFile(file),
@@ -168,6 +163,18 @@ async function readFile(file) {
 
 const computedAttachments = computed(() => {
   return [...attachmentFiles.value, ...(props.post.attachments || [])];
+});
+
+const showExtensionsText = computed(() => {
+  for (let fileInfo of attachmentFiles.value) {
+    const file = fileInfo.file;
+    let parts = file.name.split(".");
+    let ext = parts.pop().toLowerCase();
+    if (!attachmentExtensions.includes(ext)) {
+      return true;
+    }
+  }
+  return false;
 });
 
 function removeAttachment(fileInfo) {
@@ -241,6 +248,14 @@ function undoDeleted(fileInfo) {
                     Trickster just allow following files type, please check
                     before submit: <br />
                     {{ attachmentExtensions.join(", ") }}
+                  </div>
+                  <div
+                    v-if="formErrors.attachments"
+                    class="text-red-500 text-xs"
+                  >
+                    <div v-for="error in formErrors.attachments">
+                      {{ error }}
+                    </div>
                   </div>
 
                   <div
