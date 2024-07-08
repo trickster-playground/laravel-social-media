@@ -26,8 +26,14 @@ class Post extends Model
   {
     return $this->belongsTo(Group::class);
   }
+
   public function attachments(): HasMany
   {
     return $this->hasMany(PostAttachment::class)->latest();
+  }
+
+  public function reactions(): HasMany
+  {
+    return $this->hasMany(PostReaction::class);
   }
 }

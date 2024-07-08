@@ -13,6 +13,7 @@ import UpdatePostHeader from "./UpdatePostHeader.vue";
 import { router } from "@inertiajs/vue3";
 import { isImage } from "@/helpers";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/vue/24/solid";
+import axiosClient from "@/axiosClient.js";
 
 const props = defineProps({
   post: Object,
@@ -35,6 +36,17 @@ function deletePost() {
 
 function openAttachment(index) {
   emit("attachmentClick", props.post, index);
+}
+
+function sendReaction() {
+  axiosClient
+    .post(route("posts.reaction", props.post), {
+      reaction: "like",
+    })
+    .then(({ data }) => {
+      props.post.current_user_has_reaction = data.current_user_has_reaction;
+      props.post.number_of_reactions = data.number_of_reactions;
+    });
 }
 </script>
 
@@ -164,7 +176,10 @@ function openAttachment(index) {
             class="object-cover w-full h-full"
           />
 
-          <div v-else class="flex justify-center items-center flex-col">
+          <div
+            v-else
+            class="flex justify-center items-center flex-col object-contain aspect-square"
+          >
             <DocumentMagnifyingGlassIcon class="size-12" />
 
             <small class="text-white text-xs text-center my-2">{{
@@ -176,11 +191,16 @@ function openAttachment(index) {
     </div>
     <div class="flex gap-4 my-2">
       <button
-        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-red-700 rounded-lg"
+        @click="sendReaction"
+        class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-sky-600 rounded-lg"
+        :class="[
+          post.current_user_has_reaction ? 'bg-sky-600' : 'bg-gray-600',
+          'flex gap-1 flex-1 items-center justify-center py-2 px-4 rounded-lg',
+        ]"
       >
         <HandThumbUpIcon class="size-6" />
-
         Like
+        {{ post.number_of_reactions }}
       </button>
       <button
         class="flex gap-1 flex-1 items-center justify-center py-2 px-4 bg-gray-600 hover:bg-blue-700 rounded-lg"
